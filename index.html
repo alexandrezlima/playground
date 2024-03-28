@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Event Playground</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: black; /*Black background*/
+        overflow: hidden;
+      }
+      #sizeContainer,
+      #videoContainer,
+      #videoRef {
+        width: 100vw;
+        height: 100vh !important;
+      }
+      .button {
+        display: block;
+        position: absolute;
+        z-index: 4;
+        left: 0;
+      }
+      .button-1 {
+        top: 0;
+      }
+      .button-2 {
+        top: 25px;
+      }
+      .button-3 {
+        top: 50px;
+      }
+      .button-4 {
+        top: 75px;
+      }
+      .button-5 {
+        top: 100px;
+      }
+      /* Overlay styles */
+      #loading-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 1); /*black background*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999; /*Ensure it's on top of the pixel streaming content*/
+      }
+      .image-container {
+        position: relative;
+        width: 300px;
+        height: 210px;
+      }
+      .image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        clip: rect(0px, 300px, 210px, 0px); /*Defines the image area (size)*/
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading-screen">
+      <div class="image-container">
+        <img
+          class="image"
+          src="https://dl.dropboxusercontent.com/scl/fi/5n4mooxbehm8w5i1kri39p1bq/Event_playground_Loop01_300x210.gif?rlkey=5n4mooxbehm8w5i1kri39p1bq&dl=0"
+          alt="Imagem"
+        >
+      </div>
+    </div>
+    <div id="sizeContainer">
+      <div id="videoContainer">
+        <video id="videoRef"></video>
+        <audio id="audioRef"></audio>
+      </div>
+    </div>
+    <script>
+      let newWebRTC;
+      function handleSendCommands(command) {
+        newWebRTC.emitUIInteraction(command);
+      }
+
+      /*If called, removes the load screen*/
+      function removeLoadingScreen() {
+        const loadingScreen = document.getElementById("loading-screen");
+        if (loadingScreen) {
+          loadingScreen.remove();
+        }
+      }
+    </script>
+    <script type="module">
+      import { WebRTCClient } from "https://unpkg.com/@arcware/webrtc-plugin@latest/index_new.umd.js";
+
+      /*Sends a message to the pixel streaming application*/
+      function handleSendCommands(command)
+      {
+        newWebRTC.emitUIInteraction(command);
+      }
+
+      /*Opens the url link on the browser (new tab)*/
+      function handleOpenLink(url)
+      {
+        window.open(url, "_blank");
+        console.log(url);
+      }
+
+      /*Handles the paste function event*/
+      document.addEventListener("paste", function(event){
+        //Get the clipboard contents as plain text
+        var clipboardData = event.clipboardData || window.clipboardData;
+        var pastedText = clipboardData.getData("text/plain");
+
+        //Sends the pasted text to the pixel streaming application.
+        const command = { paste: pastedText };
+        handleSendCommands(command);
+      });
+
+      /*Sends the clipboard paste information to the pixel streaming application*/
+      function sendClipboardText()
+      {
+        //Checks if the clipboard transfer is supported in this browser
+        if (!navigator.clipboard) {
+          console.error("The clipboard API is not supported in this browser.");
+          return;
+        }
+
+        //Gets the clipboard text
+        navigator.clipboard
+          .readText()
+          .then((text) => {
+            //Sends it to the Pixel Streaming application
+            const command = { transfer: text };
+            handleSendCommands(command);
+          })
+          .catch((error) => {
+            console.error("Error: ", error);
+          });
+      }
+
+      //returns true if the sound is paused
+      function isSoundMuted()
+      {
+        var audio = document.getElementById("audioRef");
+        return audio.paused; 
+      }
+
+      //changes the cursor type
+      function toggleCursor(cursortype)
+      {
+        document.body.style.cursor = cursortype;
+      }
+
+      //Play/pause the sound
+      function handleSound(play)
+      {
+        var audio = document.getElementById("audioRef");
+        if (play) {
+            audio.play();
+        } else {
+            audio.pause();
+        }
+      }
+
+      newWebRTC = new WebRTCClient({
+        address: "wss://signalling-client.ragnarok.arcware.cloud/",
+        shareId: "share-5db6829b-ec92-4651-b90b-b725c75bd5f1",
+        settings: {
+          /*object with settings*/
+        },
+        playOverlay: false,
+        loader: (val) => {
+          /*handle loader*/
+        },
+        applicationResponse: (response) => {
+          /*handle application response*/
+          console.log("response", response);
+
+          const url1 = JSON.parse(response);
+
+          //link with the https photo
+          if (url1.url == "removeloading")
+          {
+            removeLoadingScreen();
+            const command = { loadingremoved: 'loadingremoved' };
+            handleSendCommands(command);
+          }
+          else if (url1.url == "paste")
+          {
+            sendClipboardText();
+          }
+          else if (url1.url == "getlevel")
+          {
+            const currentPageUrl = window.location.href;
+            const level = "";
+
+            const lastSlashIndex = currentPageUrl.lastIndexOf('/');
+            const questionMarkIndex = currentPageUrl.lastIndexOf('?');
+            if (questionMarkIndex !== -1) {
+              level = currentPageUrl.substring(lastSlashIndex + 1, questionMarkIndex);
+            } else {
+              level = currentPageUrl.substring(lastSlashIndex + 1);
+            }
+
+            //const command = { loadlevel: level };
+            const command = { loadlevel: "index.html" }; //remove this line comment if you want to test this locally, opening the unboxed level.
+            handleSendCommands(command);
+          }
+          else if (url1.url == "getfilename")
+          {
+            const currentPageUrl = window.location.href;
+
+            const questionMarkIndex = currentPageUrl.lastIndexOf('?');
+            const equalSignIndex = currentPageUrl.lastIndexOf('=');
+            const filename = '';
+
+            if (questionMarkIndex !== -1 && equalSignIndex !== -1) {
+              filename = url.substring(questionMarkIndex + 1, equalSignIndex);
+            } else {
+              filename = '';
+            }
+
+            const command = { loadfilename: filename };
+            handleSendCommands(command);
+          }
+          else if (url1.url == "getfilekey")
+          {
+            const currentPageUrl = window.location.href;
+            const filekey = '';
+            const equalSignIndex = url.lastIndexOf('=');
+            if (equalSignIndex !== -1) {
+              filekey = url.substring(equalSignIndex + 1);
+            } else {
+              filekey = '';
+            }
+            
+            const command = { loadfilekey: filekey };
+            handleSendCommands(command);
+          }
+          else if(url1.url == "soundon")
+          {
+            handleSound(true);
+          }
+          else if(url1.url == "soundoff")
+          {
+            handleSound(false);
+          }
+          else if(url1.url == "issoundmuted")
+          {
+            if (isSoundMuted())
+            {
+              const command = { loadlevel: "true" };
+              handleSendCommands(command);
+            }
+            else
+            {
+              const command = { loadlevel: "false" };
+              handleSendCommands(command);
+            }
+          }
+          else if(url1.url == "setcursordefault")
+          {
+            toggleCursor("default");
+
+          }
+          else if(url1.url == "setcursorhand")
+          {
+            toggleCursor("pointer");
+          }
+          else
+          {
+            handleOpenLink(url1.url);
+          }
+        },
+        sizeContainer: document.getElementById("sizeContainer"),
+        container: document.getElementById("videoContainer"),
+        videoRef: document.getElementById("videoRef"),
+        audioRef: document.getElementById("audioRef"),
+      });
+    </script>
+  </body>
+</html>
