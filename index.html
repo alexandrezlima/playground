@@ -210,7 +210,7 @@
             }
 
             //const command = { loadlevel: level };
-            const command = { loadlevel: "index.html" }; //remove this line comment if you want to test this locally, opening the unboxed level.
+            const command = { loadlevel: "/unboxed" }; //remove this line comment if you want to test this locally, opening the unboxed level.
             handleSendCommands(command);
           }
           else if (url1.url == "getfilename")
@@ -222,7 +222,7 @@
             const filename = '';
 
             if (questionMarkIndex !== -1 && equalSignIndex !== -1) {
-              filename = url.substring(questionMarkIndex + 1, equalSignIndex);
+              filename = currentPageUrl.substring(questionMarkIndex + 1, equalSignIndex);
             } else {
               filename = '';
             }
@@ -234,9 +234,9 @@
           {
             const currentPageUrl = window.location.href;
             const filekey = '';
-            const equalSignIndex = url.lastIndexOf('=');
+            const equalSignIndex = currentPageUrl.lastIndexOf('=');
             if (equalSignIndex !== -1) {
-              filekey = url.substring(equalSignIndex + 1);
+              filekey = currentPageUrl.substring(equalSignIndex + 1);
             } else {
               filekey = '';
             }
