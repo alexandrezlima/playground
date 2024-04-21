@@ -1,11 +1,8 @@
-/* Estilos para o corpo */
 body {
     margin: 0;
     padding: 0;
     background-color: black;
 }
-
-/* Estilos para os contêineres */
 #sizeContainer,
 #videoContainer {
     position: absolute;
@@ -15,14 +12,10 @@ body {
     height: 100%;
     overflow: hidden;
 }
-
-/* Estilos para o vídeo */
 #videoRef {
     width: 100vw;
     height: 100vh !important;
 }
-
-/* Estilos para o overlay */
 #overlay {
     position: fixed;
     top: 0;
@@ -32,8 +25,6 @@ body {
     background-color: rgba(0, 0, 0, 1);
     z-index: 1;
 }
-
-/* Estilos para o contêiner de imagens */
 #imageContainer {
     position: fixed;
     top: 50%;
