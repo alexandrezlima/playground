@@ -1,3 +1,4 @@
+<script>
 let Application;
 import * as PixelStreamingWebSdk from "https://unpkg.com/@arcware-cloud/pixelstreaming-websdk@latest/index.esm.js";
 (() => {
@@ -277,3 +278,4 @@ function removeLoadingScreen() {
 
 
 /*********** CUSTOM CODE ENDS ******************************************************/
+</script>
