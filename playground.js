@@ -216,9 +216,6 @@
 
             const url1 = JSON.parse(response);
 
-            /*SET HERE THE LEVEL NAME*/
-            const levelname = "L_Upfronts24_0408";
-
             //Removing loading response.
             if (url1.url == "removeloading")
             {
