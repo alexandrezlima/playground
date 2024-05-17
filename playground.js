@@ -227,14 +227,14 @@
             //Returns the level to load.
             else if (url1.url == "getlevel")
             {
-                const command = { loadlevel: levelname };
+                const command = { loadlevel: window.levelname };
                 handleSendCommands(command);
             }
 
             //Returns the current level name.
             else if(url1.url == "checklevel")
 			{
-                const command = { checklevel: levelname };
+                const command = { checklevel: window.levelname };
                 handleSendCommands(command);
 			}
 
