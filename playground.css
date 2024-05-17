@@ -1,6 +1,3 @@
-<!--Event Playground style-->
-    <title>Event Playground</title>
-    <style>
         body {
             margin: 0;
             padding: 0;
@@ -57,4 +54,3 @@
             background-color: #ffca07; /*Progress bar color*/
             width: 0; /*Initial percentage*/
         }
-    </style>
