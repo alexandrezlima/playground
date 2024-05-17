@@ -214,6 +214,9 @@
             (response) => {
             console.log("ApplicationResponse", response);
 
+		const configElement = document.getElementById('config');
+		const levelname = configElement.getAttribute('levelname');
+
             const url1 = JSON.parse(response);
 
             //Removing loading response.
