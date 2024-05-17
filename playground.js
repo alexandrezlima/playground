@@ -214,9 +214,6 @@
             (response) => {
             console.log("ApplicationResponse", response);
 
-		const configElement = document.getElementById('config');
-		const levelname = configElement.getAttribute('levelname');
-
             const url1 = JSON.parse(response);
 
             //Removing loading response.
@@ -230,14 +227,14 @@
             //Returns the level to load.
             else if (url1.url == "getlevel")
             {
-                const command = { loadlevel: window.levelname };
+                const command = { loadlevel: parent.levelname };
                 handleSendCommands(command);
             }
 
             //Returns the current level name.
             else if(url1.url == "checklevel")
 			{
-                const command = { checklevel: window.levelname };
+                const command = { checklevel: parent.levelname };
                 handleSendCommands(command);
 			}
 
